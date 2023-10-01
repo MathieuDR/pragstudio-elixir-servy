@@ -1,18 +1,22 @@
 defmodule Servy.FileServer do
   @base_path Path.expand("../../pages", __DIR__)
+  alias Servy.Conv
 
   def serve_file(page, conv) do
     case validate_page_input(page) do
-      {:ok, page} -> retrieve_file(Path.join(@base_path, page), conv)
-      {:error, reason} -> %{conv | status: 500, resp_body: "Something went wrong: #{reason}"}
+      {:ok, page} ->
+        retrieve_file(Path.join(@base_path, page), conv)
+
+      {:error, reason} ->
+        %Conv{conv | status_code: 500, resp_body: "Something went wrong: #{reason}"}
     end
   end
 
   defp retrieve_file(path, conv) do
     case File.read(path) do
-      {:ok, content} -> %{conv | status: 200, resp_body: content}
-      {:error, :enoent} -> %{conv | status: 404, resp_body: "File not found!"}
-      {:error, reason} -> %{conv | status: 500, resp_body: "File error: #{reason}"}
+      {:ok, content} -> %Conv{conv | status_code: 200, resp_body: content}
+      {:error, :enoent} -> %Conv{conv | status_code: 404, resp_body: "File not found!"}
+      {:error, reason} -> %Conv{conv | status_code: 500, resp_body: "File error: #{reason}"}
     end
   end
 

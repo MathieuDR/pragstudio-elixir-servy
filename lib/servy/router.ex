@@ -1,35 +1,36 @@
 defmodule Servy.Router do
   alias Servy.FileServer
+  alias Servy.Conv
 
-  def route(%{path: "/about", method: "GET"} = conv) do
+  def route(%Conv{path: "/about", method: "GET"} = conv) do
     FileServer.serve_file("about.md", conv)
   end
 
-  def route(%{path: "/bears/new", method: "GET"} = conv) do
+  def route(%Conv{path: "/bears/new", method: "GET"} = conv) do
     FileServer.serve_file("form.html", conv)
   end
 
-  def route(%{path: "/pages/" <> page, method: "GET"} = conv) do
+  def route(%Conv{path: "/pages/" <> page, method: "GET"} = conv) do
     FileServer.serve_file(page, conv)
   end
 
-  def route(%{path: "/wildthings", method: "GET"} = conv) do
-    %{conv | status: 200, resp_body: "Bears, Lions, Tigers"}
+  def route(%Conv{path: "/wildthings", method: "GET"} = conv) do
+    %Conv{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
-  def route(%{path: "/bears", method: "GET"} = conv) do
-    %{conv | status: 200, resp_body: "Teddy, Smokey, Paddington"}
+  def route(%Conv{path: "/bears", method: "GET"} = conv) do
+    %Conv{conv | status_code: 200, resp_body: "Teddy, Smokey, Paddington"}
   end
 
-  def route(%{path: "/bears/" <> id, method: "GET"} = conv) do
-    %{conv | status: 200, resp_body: "Bear #{id}"}
+  def route(%Conv{path: "/bears/" <> id, method: "GET"} = conv) do
+    %Conv{conv | status_code: 200, resp_body: "Bear #{id}"}
   end
 
-  def route(%{path: "/bears/" <> id, method: "DELETE"} = conv) do
-    %{conv | status: 200, resp_body: "Deleted bear #{id}"}
+  def route(%Conv{path: "/bears/" <> id, method: "DELETE"} = conv) do
+    %Conv{conv | status_code: 200, resp_body: "Deleted bear #{id}"}
   end
 
-  def route(%{path: path} = conv) do
-    %{conv | status: 404, resp_body: "Resource #{path} not found"}
+  def route(%Conv{path: path} = conv) do
+    %Conv{conv | status_code: 404, resp_body: "Resource #{path} not found"}
   end
 end

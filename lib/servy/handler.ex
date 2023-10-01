@@ -22,9 +22,9 @@ defmodule Servy.Handler do
     |> create_conv()
   end
 
-  def format_response(conv) do
+  def format_response(%Servy.Conv{} = conv) do
     """
-    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
+    HTTP/1.1 #{conv.status_code} #{status_reason(conv.status_code)}
     Content-Type: text/html
     Content-Length: #{byte_size(conv.resp_body)}
 
@@ -44,5 +44,5 @@ defmodule Servy.Handler do
   end
 
   defp create_conv([verb, route, _version]),
-    do: %{method: verb, path: route, resp_body: nil, status: nil}
+    do: %Servy.Conv{method: verb, path: route, resp_body: nil, status_code: nil}
 end

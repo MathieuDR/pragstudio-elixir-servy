@@ -10,7 +10,7 @@ defmodule Servy.PluginsTest do
         %{resp_body: body} =
           %{
             ServySupportTest.create_conv("GET", "/no-tada")
-            | status: @status_code,
+            | status_code: @status_code,
               resp_body: "papiot"
           }
           |> Plugins.emojify()
@@ -25,7 +25,7 @@ defmodule Servy.PluginsTest do
         %{resp_body: body} =
           %{
             ServySupportTest.create_conv("GET", "/tada")
-            | status: @status_code,
+            | status_code: @status_code,
               resp_body: "papiot"
           }
           |> IO.inspect()
@@ -70,4 +70,3 @@ defmodule Servy.PluginsTest do
     end
   end
 end
-

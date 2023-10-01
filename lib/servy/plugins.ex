@@ -1,11 +1,12 @@
 defmodule Servy.Plugins do
   require Logger
+  alias Servy.Conv
 
-  def rewrite_path(%{path: "/wildlife"} = conv), do: %{conv | path: "/wildthings"}
+  def rewrite_path(%Conv{path: "/wildlife"} = conv), do: %Conv{conv | path: "/wildthings"}
   def rewrite_path(conv), do: conv
 
-  def emojify(%{status: code, resp_body: body} = conv) when code in [200, 201] do
-    %{conv | resp_body: "🎉 " <> body}
+  def emojify(%Conv{status_code: code, resp_body: body} = conv) when code in [200, 201] do
+    %Conv{conv | resp_body: "🎉 " <> body}
   end
 
   def emojify(conv), do: conv
@@ -15,17 +16,17 @@ defmodule Servy.Plugins do
     conv
   end
 
-  def track(%{status: 404, path: path} = conv) do
+  def track(%Conv{status_code: 404, path: path} = conv) do
     Logger.warn("#{path} not found")
     conv
   end
 
   def track(conv), do: conv
 
-  def rewrite_id_from_query_params(%{path: path} = conv) do
+  def rewrite_id_from_query_params(%Conv{path: path} = conv) do
     with {base_path, params} <- extract_params(path),
          id when not is_nil(id) <- params["id"] do
-      %{conv | path: "#{base_path}/#{id}"}
+      %Conv{conv | path: "#{base_path}/#{id}"}
     else
       _ -> conv
     end
