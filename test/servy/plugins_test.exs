@@ -28,7 +28,6 @@ defmodule Servy.PluginsTest do
             | status_code: @status_code,
               resp_body: "papiot"
           }
-          |> IO.inspect()
           |> Plugins.emojify()
 
         assert "🎉 papiot" = body

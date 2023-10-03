@@ -67,5 +67,14 @@ defmodule Servy.RouterTest do
       assert %{resp_body: "Something went wrong: wrong_ext", status_code: 500} =
                Router.route(conv)
     end
+
+    test "POST /bears/new creates a fake bear" do
+      conv = %{
+        ServySupportTest.create_conv("POST", "/bears/new")
+        | params: %{"name" => "Baloo", "type" => "Brown"}
+      }
+
+      assert %{resp_body: "Fake bear created. Baloo, a Brown bear"} = Router.route(conv)
+    end
   end
 end

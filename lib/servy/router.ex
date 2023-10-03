@@ -1,6 +1,7 @@
 defmodule Servy.Router do
   alias Servy.FileServer
   alias Servy.Conv
+  alias Servy.Controllers.BearController
 
   def route(%Conv{path: "/about", method: "GET"} = conv) do
     FileServer.serve_file("about.md", conv)
@@ -19,15 +20,24 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: "/bears", method: "GET"} = conv) do
-    %Conv{conv | status_code: 200, resp_body: "Teddy, Smokey, Paddington"}
+    BearController.index(conv)
   end
 
   def route(%Conv{path: "/bears/" <> id, method: "GET"} = conv) do
-    %Conv{conv | status_code: 200, resp_body: "Bear #{id}"}
+    BearController.show(conv, id)
   end
 
   def route(%Conv{path: "/bears/" <> id, method: "DELETE"} = conv) do
-    %Conv{conv | status_code: 200, resp_body: "Deleted bear #{id}"}
+    BearController.delete(conv, id)
+  end
+
+  def route(
+        %Conv{
+          path: "/bears/new",
+          method: "POST"
+        } = conv
+      ) do
+    BearController.new(conv)
   end
 
   def route(%Conv{path: path} = conv) do

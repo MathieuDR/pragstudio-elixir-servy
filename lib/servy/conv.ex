@@ -7,9 +7,10 @@ defmodule Servy.Conv do
           method: String.t(),
           path: String.t(),
           resp_body: String.t(),
-          status_code: non_neg_integer() | nil
+          status_code: non_neg_integer() | nil,
+          headers: [],
+          params: %{} | nil
         }
 
-  defstruct method: "", path: "", resp_body: "", status_code: nil
+  defstruct method: "", path: "", resp_body: "", status_code: nil, headers: [], params: %{}
 end
-

@@ -1,25 +1,18 @@
 defmodule Servy.Handler do
   alias Servy.Plugins
+  alias Servy.Parser
   alias Servy.Router
 
   def handle(request) do
     request
-    |> parse()
+    |> Parser.parse()
     |> Plugins.rewrite_path()
     |> Plugins.rewrite_id_from_query_params()
-    |> Plugins.log()
+    # |> Plugins.log()
     |> Router.route()
     |> Plugins.emojify()
     |> Plugins.track()
     |> format_response()
-  end
-
-  def parse(request) do
-    request
-    |> String.split("\n")
-    |> List.first()
-    |> String.split(" ")
-    |> create_conv()
   end
 
   def format_response(%Servy.Conv{} = conv) do
@@ -42,7 +35,4 @@ defmodule Servy.Handler do
       500 => "Internal Server Error"
     }[code]
   end
-
-  defp create_conv([verb, route, _version]),
-    do: %Servy.Conv{method: verb, path: route, resp_body: nil, status_code: nil}
 end
