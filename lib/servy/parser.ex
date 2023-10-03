@@ -9,17 +9,15 @@ defmodule Servy.Parser do
     create_conv(method, path, headers, params)
   end
 
-  def parse_headers(list, headers \\ %{})
-  def parse_headers([], headers), do: headers
+  def parse_headers(headers) do
+    Enum.reduce(headers, %{}, fn header, acc ->
+      [key, value] =
+        header
+        |> String.split(":", parts: 2, trim: true)
+        |> Enum.map(&String.trim/1)
 
-  def parse_headers([h | t], headers) do
-    [key, value] =
-      h
-      |> String.split(":", parts: 2, trim: true)
-      |> Enum.map(&String.trim/1)
-
-    headers = Map.put(headers, key, value)
-    parse_headers(t, headers)
+      Map.put(acc, key, value)
+    end)
   end
 
   defp parse_params("application/x-www-form-urlencoded", params_string) do
