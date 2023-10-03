@@ -24,11 +24,13 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: "/bears/" <> id, method: "GET"} = conv) do
-    BearController.show(conv, id)
+    params = Map.put(conv.params, "id", id)
+    BearController.show(conv, params)
   end
 
   def route(%Conv{path: "/bears/" <> id, method: "DELETE"} = conv) do
-    BearController.delete(conv, id)
+    params = Map.put(conv.params, "id", id)
+    BearController.delete(conv, params)
   end
 
   def route(
@@ -37,7 +39,7 @@ defmodule Servy.Router do
           method: "POST"
         } = conv
       ) do
-    BearController.new(conv)
+    BearController.new(conv, conv.params)
   end
 
   def route(%Conv{path: path} = conv) do
