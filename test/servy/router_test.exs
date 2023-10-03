@@ -11,12 +11,17 @@ defmodule Servy.RouterTest do
 
     test "GET /bears routes correctly" do
       conv = ServySupportTest.create_conv("GET", "/bears")
-      assert %{resp_body: "Teddy, Smokey, Paddington", status_code: 200} = Router.route(conv)
+
+      assert %{
+               resp_body:
+                 "<ul><li>Brutus - Grizzly</li><li>Kenai - Grizzly</li><li>Scarface - Grizzly</li></ul>",
+               status_code: 200
+             } = Router.route(conv)
     end
 
     test "GET /bears/5 routes correctly" do
       conv = ServySupportTest.create_conv("GET", "/bears/5")
-      assert %{resp_body: "Bear 5", status_code: 200} = Router.route(conv)
+      assert %{resp_body: "Snow - Polar", status_code: 200} = Router.route(conv)
     end
 
     test "DELETE /bears routes correctly" do

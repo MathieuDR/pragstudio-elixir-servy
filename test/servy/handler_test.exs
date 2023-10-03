@@ -43,9 +43,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK
              Content-Type: text/html
-             Content-Length: 30
+             Content-Length: 90
 
-             🎉 Teddy, Smokey, Paddington
+             🎉 <ul><li>Brutus - Grizzly</li><li>Kenai - Grizzly</li><li>Scarface - Grizzly</li></ul>
              """ == Servy.Handler.handle(request)
     end
 
@@ -55,9 +55,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK
              Content-Type: text/html
-             Content-Length: 11
+             Content-Length: 19
 
-             🎉 Bear 2
+             🎉 Smokey - Black
              """ == Servy.Handler.handle(request)
     end
 
