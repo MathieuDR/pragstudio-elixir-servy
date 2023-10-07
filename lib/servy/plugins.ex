@@ -12,12 +12,18 @@ defmodule Servy.Plugins do
   def emojify(conv), do: conv
 
   def log(conv) do
-    Logger.notice(conv)
+    if Mix.env() == :dev do
+      IO.inspect(conv)
+    end
+
     conv
   end
 
   def track(%Conv{status_code: 404, path: path} = conv) do
-    Logger.warn("#{path} not found")
+    if Mix.env() != :test do
+      Logger.warn("#{path} not found")
+    end
+
     conv
   end
 

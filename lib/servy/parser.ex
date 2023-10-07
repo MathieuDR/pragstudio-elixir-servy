@@ -20,13 +20,23 @@ defmodule Servy.Parser do
     end)
   end
 
-  defp parse_params("application/x-www-form-urlencoded", params_string) do
+  @doc """
+  Parses param string in the form of `key1=value1&key2=value2` into a map with corresponding keys and values
+
+  ## Examples
+    iex> params_string = "name=Balloo&type=Brown"
+    iex> Servy.Parser.parse_params("application/x-www-form-urlencoded", params_string)
+    %{"name" => "Balloo", "type" => "Brown"}
+    iex> Servy.Parser.parse_params("multipart/formdata", params_string)
+    iex> %{}
+  """
+  def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string
     |> String.trim()
     |> URI.decode_query()
   end
 
-  defp parse_params(_, _), do: %{}
+  def parse_params(_, _), do: %{}
 
   defp create_conv(verb, route, headers, params),
     do: %Servy.Conv{

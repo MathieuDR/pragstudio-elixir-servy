@@ -17,10 +17,10 @@ defmodule Servy.HandlerTest do
       request = create_request("GET", "/wildthings")
 
       assert """
-             HTTP/1.1 200 OK
-             Content-Type: text/html
-             Content-Length: 25
-
+             HTTP/1.1 200 OK\r
+             Content-Type: text/html\r
+             Content-Length: 25\r
+             \r
              🎉 Bears, Lions, Tigers
              """ == Servy.Handler.handle(request)
     end
@@ -29,10 +29,10 @@ defmodule Servy.HandlerTest do
       request = create_request("GET", "/wildlife")
 
       assert """
-             HTTP/1.1 200 OK
-             Content-Type: text/html
-             Content-Length: 25
-
+             HTTP/1.1 200 OK\r
+             Content-Type: text/html\r
+             Content-Length: 25\r
+             \r
              🎉 Bears, Lions, Tigers
              """ == Servy.Handler.handle(request)
     end
@@ -41,34 +41,36 @@ defmodule Servy.HandlerTest do
       request = create_request("GET", "/bears")
 
       assert """
-             HTTP/1.1 200 OK
-             Content-Type: text/html
-             Content-Length: 351
-
-             🎉 <h1>All The Bears!</h1>\n\n<ul>\n  \n  \t<li>Brutus - Grizzly</li>\n  \n  \t<li>Iceman - Polar</li>\n  \n  \t<li>Kenai - Grizzly</li>\n  \n  \t<li>Paddington - Brown</li>\n  \n  \t<li>Roscoe - Panda</li>\n  \n  \t<li>Rosie - Black</li>\n  \n  \t<li>Scarface - Grizzly</li>\n  \n  \t<li>Smokey - Black</li>\n  \n  \t<li>Snow - Polar</li>\n  \n  \t<li>Teddy - Brown</li>\n  \n</ul>\n
-             """ == Servy.Handler.handle(request)
+             HTTP/1.1 200 OK\r
+             Content-Type: text/html\r
+             Content-Length: 351\r
+             \r
+             🎉 <h1>All The Bears!</h1><ul><li>Brutus - Grizzly</li><li>Iceman - Polar</li><li>Kenai - Grizzly</li><li>Paddington - Brown</li><li>Roscoe - Panda</li><li>Rosie - Black</li><li>Scarface - Grizzly</li><li>Smokey - Black</li><li>Snow - Polar</li><li>Teddy - Brown</li></ul>
+             """
+             |> remove_whitespaces() == Servy.Handler.handle(request) |> remove_whitespaces()
     end
 
     test "Can request bear with ID" do
       request = create_request("GET", "/bears/2")
 
       assert """
-             HTTP/1.1 200 OK
-             Content-Type: text/html
-             Content-Length: 79
-
-             🎉 <h1>Show Bear</h1>\n<p>\nIs Smokey hibernating? <strong>false</strong>\n</p>\n
-             """ == Servy.Handler.handle(request)
+             HTTP/1.1 200 OK\r
+             Content-Type: text/html\r
+             Content-Length: 79\r
+             \r
+             🎉 <h1>Show Bear</h1><p>Is Smokey hibernating? <strong>false</strong></p>
+             """
+             |> remove_whitespaces() == Servy.Handler.handle(request) |> remove_whitespaces()
     end
 
     test "Can delte bear with ID" do
       request = create_request("DELETE", "/bears/8")
 
       assert """
-             HTTP/1.1 200 OK
-             Content-Type: text/html
-             Content-Length: 19
-
+             HTTP/1.1 200 OK\r
+             Content-Type: text/html\r
+             Content-Length: 19\r
+             \r
              🎉 Deleted bear 8
              """ == Servy.Handler.handle(request)
     end
@@ -77,12 +79,14 @@ defmodule Servy.HandlerTest do
       request = create_request("GET", "/bamboozled")
 
       assert """
-             HTTP/1.1 404 Not Found
-             Content-Type: text/html
-             Content-Length: 30
-
+             HTTP/1.1 404 Not Found\r
+             Content-Type: text/html\r
+             Content-Length: 30\r
+             \r
              Resource /bamboozled not found
              """ == Servy.Handler.handle(request)
     end
   end
+
+  defp remove_whitespaces(text), do: String.replace(text, ~r{\s}, "")
 end

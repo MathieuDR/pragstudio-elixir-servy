@@ -1,5 +1,7 @@
 defmodule Servy.ParserTest do
   use ExUnit.Case
+  doctest Servy.Parser
+
   alias Servy.Parser
   alias Servy.Conv
 
@@ -74,6 +76,13 @@ defmodule Servy.ParserTest do
       """
 
       assert %Conv{params: %{"name" => "Baloo", "type" => "Brown"}} = Parser.parse(request)
+    end
+  end
+
+  describe "parse_headers/1" do
+    test "parse list of headers into map" do
+      header_lines = ["A: 1", "B: 2"]
+      assert %{"A" => "1", "B" => "2"} == Parser.parse_headers(header_lines)
     end
   end
 end
