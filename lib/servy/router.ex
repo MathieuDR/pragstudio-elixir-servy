@@ -19,6 +19,10 @@ defmodule Servy.Router do
     %Conv{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
+  def route(%Conv{path: "/api/bears", method: "GET"} = conv) do
+    Servy.Controllers.Api.BearController.index(conv)
+  end
+
   def route(%Conv{path: "/bears", method: "GET"} = conv) do
     BearController.index(conv)
   end

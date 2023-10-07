@@ -18,7 +18,7 @@ defmodule Servy.Handler do
   def format_response(%Servy.Conv{} = conv) do
     """
     HTTP/1.1 #{conv.status_code} #{status_reason(conv.status_code)}\r
-    Content-Type: text/html\r
+    Content-Type: #{conv.resp_content_type}\r
     Content-Length: #{byte_size(conv.resp_body)}\r
     \r
     #{conv.resp_body}
