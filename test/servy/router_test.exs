@@ -14,14 +14,19 @@ defmodule Servy.RouterTest do
 
       assert %{
                resp_body:
-                 "<ul><li>Brutus - Grizzly</li><li>Kenai - Grizzly</li><li>Scarface - Grizzly</li></ul>",
+                 "<h1>All The Bears!</h1>\n\n<ul>\n  \n  \t<li>Brutus - Grizzly</li>\n  \n  \t<li>Iceman - Polar</li>\n  \n  \t<li>Kenai - Grizzly</li>\n  \n  \t<li>Paddington - Brown</li>\n  \n  \t<li>Roscoe - Panda</li>\n  \n  \t<li>Rosie - Black</li>\n  \n  \t<li>Scarface - Grizzly</li>\n  \n  \t<li>Smokey - Black</li>\n  \n  \t<li>Snow - Polar</li>\n  \n  \t<li>Teddy - Brown</li>\n  \n</ul>\n",
                status_code: 200
              } = Router.route(conv)
     end
 
     test "GET /bears/5 routes correctly" do
       conv = ServySupportTest.create_conv("GET", "/bears/5")
-      assert %{resp_body: "Snow - Polar", status_code: 200} = Router.route(conv)
+
+      assert %{
+               resp_body:
+                 "<h1>Show Bear</h1>\n<p>\nIs Snow hibernating? <strong>false</strong>\n</p>\n",
+               status_code: 200
+             } = Router.route(conv)
     end
 
     test "DELETE /bears routes correctly" do
