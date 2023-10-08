@@ -13,10 +13,17 @@ defmodule Servy.FileServer do
   end
 
   defp retrieve_file(path, conv) do
+    extension = Path.extname(path)
+
     case File.read(path) do
-      {:ok, content} -> Conv.put_content(conv, content, "text/html", 200)
-      {:error, :enoent} -> Conv.put_content(conv, "File not found!", "text/html", 404)
-      {:error, reason} -> Conv.put_content(conv, "File error: #{reason}", "text/html", 500)
+      {:ok, content} ->
+        Conv.put_content(conv, parse_content(extension, content), "text/html", 200)
+
+      {:error, :enoent} ->
+        Conv.put_content(conv, "File not found!", "text/html", 404)
+
+      {:error, reason} ->
+        Conv.put_content(conv, "File error: #{reason}", "text/html", 500)
     end
   end
 
@@ -43,4 +50,8 @@ defmodule Servy.FileServer do
       false -> :ok
     end
   end
+
+  defp parse_content(extension, content)
+  defp parse_content(".md", content), do: Earmark.as_html!(content)
+  defp parse_content(_, content), do: content
 end

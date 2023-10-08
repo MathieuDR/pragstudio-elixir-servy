@@ -74,7 +74,7 @@ defmodule Servy.RouterTest do
 
       assert %{
                resp_headers: %{"Content-Type" => "text/html"},
-               resp_body: "# About\n" <> _rest,
+               resp_body: "<h1>\nAbout</h1>" <> _rest,
                status_code: 200
              } = Router.route(conv)
     end
@@ -84,7 +84,7 @@ defmodule Servy.RouterTest do
 
       assert %{
                resp_headers: %{"Content-Type" => "text/html"},
-               resp_body: "# About\n" <> _rest,
+               resp_body: "<h1>\nAbout</h1>" <> _rest,
                status_code: 200
              } = Router.route(conv)
     end
