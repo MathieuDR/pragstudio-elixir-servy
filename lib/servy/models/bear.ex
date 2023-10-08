@@ -3,4 +3,3 @@ defmodule Servy.Models.Bear do
 
   def is_type?(bear, type), do: bear.type == type
 end
-
