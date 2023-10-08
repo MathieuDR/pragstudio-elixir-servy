@@ -10,7 +10,7 @@ defmodule Servy.Handler do
     |> Plugins.rewrite_id_from_query_params()
     |> Plugins.log()
     |> Router.route()
-    |> Plugins.emojify()
+    # |> Plugins.emojify()
     |> Plugins.track()
     |> format_response()
   end

@@ -19,9 +19,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK\r
              Content-Type: text/html\r
-             Content-Length: 25\r
+             Content-Length: 20\r
              \r
-             🎉 Bears, Lions, Tigers
+             Bears, Lions, Tigers
              """ == Servy.Handler.handle(request)
     end
 
@@ -31,9 +31,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK\r
              Content-Type: text/html\r
-             Content-Length: 25\r
+             Content-Length: 20\r
              \r
-             🎉 Bears, Lions, Tigers
+             Bears, Lions, Tigers
              """ == Servy.Handler.handle(request)
     end
 
@@ -43,9 +43,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK\r
              Content-Type: text/html\r
-             Content-Length: 351\r
+             Content-Length: 346\r
              \r
-             🎉 <h1>All The Bears!</h1><ul><li>Brutus - Grizzly</li><li>Iceman - Polar</li><li>Kenai - Grizzly</li><li>Paddington - Brown</li><li>Roscoe - Panda</li><li>Rosie - Black</li><li>Scarface - Grizzly</li><li>Smokey - Black</li><li>Snow - Polar</li><li>Teddy - Brown</li></ul>
+             <h1>All The Bears!</h1><ul><li>Brutus - Grizzly</li><li>Iceman - Polar</li><li>Kenai - Grizzly</li><li>Paddington - Brown</li><li>Roscoe - Panda</li><li>Rosie - Black</li><li>Scarface - Grizzly</li><li>Smokey - Black</li><li>Snow - Polar</li><li>Teddy - Brown</li></ul>
              """
              |> remove_whitespaces() == Servy.Handler.handle(request) |> remove_whitespaces()
     end
@@ -56,9 +56,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK\r
              Content-Type: text/html\r
-             Content-Length: 79\r
+             Content-Length: 74\r
              \r
-             🎉 <h1>Show Bear</h1><p>Is Smokey hibernating? <strong>false</strong></p>
+             <h1>Show Bear</h1><p>Is Smokey hibernating? <strong>false</strong></p>
              """
              |> remove_whitespaces() == Servy.Handler.handle(request) |> remove_whitespaces()
     end
@@ -69,9 +69,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 200 OK\r
              Content-Type: text/html\r
-             Content-Length: 19\r
+             Content-Length: 14\r
              \r
-             🎉 Deleted bear 8
+             Deleted bear 8
              """ == Servy.Handler.handle(request)
     end
 
@@ -102,9 +102,9 @@ defmodule Servy.HandlerTest do
       assert """
              HTTP/1.1 201 Created\r
              Content-Type: text/html\r
-             Content-Length: 40\r
+             Content-Length: 35\r
              \r
-             🎉 Created a Polar bear named Breezly!
+             Created a Polar bear named Breezly!
              """ = Servy.Handler.handle(request)
     end
   end
