@@ -5,8 +5,12 @@ defmodule Servy.Plugins do
   def rewrite_path(%Conv{path: "/wildlife"} = conv), do: %Conv{conv | path: "/wildthings"}
   def rewrite_path(conv), do: conv
 
-  def emojify(%Conv{status_code: code, resp_body: body} = conv) when code in [200, 201] do
-    %Conv{conv | resp_body: "🎉 " <> body}
+  def emojify(
+        %Conv{status_code: code, resp_body: body, resp_headers: %{"Content-Type" => "text/html"}} =
+          conv
+      )
+      when code in [200, 201] do
+    Conv.put_content(conv, "🎉 " <> body, "text/html", code)
   end
 
   def emojify(conv), do: conv

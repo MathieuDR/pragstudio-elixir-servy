@@ -10,7 +10,7 @@ defmodule Servy.Conv do
           status_code: non_neg_integer() | nil,
           headers: [],
           params: %{} | nil,
-          resp_content_type: String.t()
+          resp_headers: %{}
         }
 
   defstruct method: "",
@@ -19,5 +19,19 @@ defmodule Servy.Conv do
             status_code: nil,
             headers: [],
             params: %{},
-            resp_content_type: "text/html"
+            resp_headers: %{}
+
+  def put_content(
+        %__MODULE__{resp_headers: headers} = conv,
+        content,
+        type \\ "text/html",
+        status_code \\ 200
+      ) do
+    headers =
+      headers
+      |> Map.put("Content-Type", type)
+      |> Map.put("Content-Length", byte_size(content))
+
+    %{conv | resp_headers: headers, resp_body: content, status_code: status_code}
+  end
 end

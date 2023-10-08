@@ -8,15 +8,15 @@ defmodule Servy.FileServer do
         retrieve_file(Path.join(@base_path, page), conv)
 
       {:error, reason} ->
-        %Conv{conv | status_code: 500, resp_body: "Something went wrong: #{reason}"}
+        Conv.put_content(conv, "Something went wrong: #{reason}", "text/html", 500)
     end
   end
 
   defp retrieve_file(path, conv) do
     case File.read(path) do
-      {:ok, content} -> %Conv{conv | status_code: 200, resp_body: content}
-      {:error, :enoent} -> %Conv{conv | status_code: 404, resp_body: "File not found!"}
-      {:error, reason} -> %Conv{conv | status_code: 500, resp_body: "File error: #{reason}"}
+      {:ok, content} -> Conv.put_content(conv, content, "text/html", 200)
+      {:error, :enoent} -> Conv.put_content(conv, "File not found!", "text/html", 404)
+      {:error, reason} -> Conv.put_content(conv, "File error: #{reason}", "text/html", 500)
     end
   end
 

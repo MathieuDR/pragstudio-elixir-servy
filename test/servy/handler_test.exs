@@ -4,11 +4,11 @@ defmodule Servy.HandlerTest do
 
   defp create_request(verb, path) do
     """
-    #{verb} #{path} HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    #{verb} #{path} HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
   end
 
@@ -85,6 +85,72 @@ defmodule Servy.HandlerTest do
              \r
              Resource /bamboozled not found
              """ == Servy.Handler.handle(request)
+    end
+
+    test "POST /api/bears" do
+      request = """
+      POST /api/bears HTTP/1.1\r
+      Host: example.com\r
+      User-Agent: ExampleBrowser/1.0\r
+      Accept: */*\r
+      Content-Type: application/json\r
+      Content-Length: 21\r
+      \r
+      {"name": "Breezly", "type": "Polar"}
+      """
+
+      assert """
+             HTTP/1.1 201 Created\r
+             Content-Type: text/html\r
+             Content-Length: 40\r
+             \r
+             🎉 Created a Polar bear named Breezly!
+             """ = Servy.Handler.handle(request)
+    end
+  end
+
+  describe "create_headers/1" do
+    test "Creates headerlines with \\r\\n" do
+      headers = %{
+        "Content-Type" => "text/html",
+        "Content-Length" => 39,
+        "X-Custom-Header" => "My value"
+      }
+
+      assert 3 = Servy.Handler.create_headers(headers) |> String.split("\r\n") |> Enum.count()
+    end
+
+    test "Create headers put Content-Length on top" do
+      headers = %{
+        "X-Custom-Header" => "My value",
+        "Content-Length" => 39
+      }
+
+      header_response = Servy.Handler.create_headers(headers)
+      assert String.starts_with?(header_response, "Content-Length: ") == true
+    end
+
+    test "Create headers put Content-Length and Content-Type on top" do
+      headers = %{
+        "X-Custom-Header" => "My value",
+        "Content-Type" => "text/html",
+        "Content-Length" => 39
+      }
+
+      assert Servy.Handler.create_headers(headers)
+             |> String.split("\r\n")
+             |> Enum.take(2)
+             |> Enum.all?(&String.starts_with?(&1, "Content-")) == true
+    end
+
+    test "Create headers put Content-Type on top" do
+      headers = %{
+        "X-Custom-Header" => "My value",
+        "Content-Type" => "text/html"
+      }
+
+      header_response = Servy.Handler.create_headers(headers)
+      assert String.starts_with?(header_response, "Content-Type: ") == true
     end
   end
 

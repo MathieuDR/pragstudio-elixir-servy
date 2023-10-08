@@ -1,7 +1,7 @@
 defmodule Servy.Parser do
   def parse(request) do
-    [top, body] = String.split(request, "\n\n")
-    [request_line | headers] = String.split(top, "\n")
+    [top, body] = String.split(request, "\r\n\r\n")
+    [request_line | headers] = String.split(top, "\r\n")
     [method, path, _] = String.split(request_line, " ")
     headers = parse_headers(headers)
     params = parse_params(headers["Content-Type"], body)
@@ -34,6 +34,12 @@ defmodule Servy.Parser do
     params_string
     |> String.trim()
     |> URI.decode_query()
+  end
+
+  def parse_params("application/json", params_string) do
+    params_string
+    |> String.trim()
+    |> Poison.decode!()
   end
 
   def parse_params(_, _), do: %{}

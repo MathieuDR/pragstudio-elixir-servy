@@ -26,7 +26,8 @@ defmodule Servy.PluginsTest do
           %{
             ServySupportTest.create_conv("GET", "/tada")
             | status_code: @status_code,
-              resp_body: "papiot"
+              resp_body: "papiot",
+              resp_headers: %{"Content-Type" => "text/html"}
           }
           |> Plugins.emojify()
 

@@ -16,11 +16,15 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: "/wildthings", method: "GET"} = conv) do
-    %Conv{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
+    Conv.put_content(conv, "Bears, Lions, Tigers")
   end
 
   def route(%Conv{path: "/api/bears", method: "GET"} = conv) do
     Servy.Controllers.Api.BearController.index(conv)
+  end
+
+  def route(%Conv{path: "/api/bears", method: "POST"} = conv) do
+    Servy.Controllers.Api.BearController.create(conv, conv.params)
   end
 
   def route(%Conv{path: "/bears", method: "GET"} = conv) do
@@ -47,6 +51,6 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: path} = conv) do
-    %Conv{conv | status_code: 404, resp_body: "Resource #{path} not found"}
+    Conv.put_content(conv, "Resource #{path} not found", "text/html", 404)
   end
 end

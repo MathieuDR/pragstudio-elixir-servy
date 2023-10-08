@@ -19,16 +19,16 @@ defmodule Servy.Controllers.BearController do
         "name" => name,
         "type" => type
       }) do
-    %Conv{conv | status_code: 201, resp_body: "Fake bear created. #{name}, a #{type} bear"}
+    Conv.put_content(conv, "Fake bear created. #{name}, a #{type} bear")
   end
 
   def delete(conv, %{"id" => id}) do
-    %Conv{conv | status_code: 200, resp_body: "Deleted bear #{id}"}
+    Conv.put_content(conv, "Deleted bear #{id}")
   end
 
   defp render(conv, template, bindings \\ []) do
     content = @templates_path |> Path.join(template) |> EEx.eval_file(bindings)
 
-    %Conv{conv | status_code: 200, resp_body: content}
+    Conv.put_content(conv, content)
   end
 end

@@ -8,7 +8,7 @@ defmodule Servy.Handler do
     |> Parser.parse()
     |> Plugins.rewrite_path()
     |> Plugins.rewrite_id_from_query_params()
-    # |> Plugins.log()
+    |> Plugins.log()
     |> Router.route()
     |> Plugins.emojify()
     |> Plugins.track()
@@ -18,11 +18,23 @@ defmodule Servy.Handler do
   def format_response(%Servy.Conv{} = conv) do
     """
     HTTP/1.1 #{conv.status_code} #{status_reason(conv.status_code)}\r
-    Content-Type: #{conv.resp_content_type}\r
-    Content-Length: #{byte_size(conv.resp_body)}\r
+    #{create_headers(conv.resp_headers)}\r
     \r
     #{conv.resp_body}
     """
+  end
+
+  def create_headers(headers) do
+    headers
+    |> Enum.sort(fn {key, _}, {key2, _} ->
+      cond do
+        key == "Content-Type" -> true
+        key2 == "Content-Type" -> false
+        key == "Content-Length" -> true
+      end
+    end)
+    |> Enum.map(fn {k, v} -> "#{k}: #{v}" end)
+    |> Enum.join("\r\n")
   end
 
   defp status_reason(code) do
