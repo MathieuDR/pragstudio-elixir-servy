@@ -15,6 +15,15 @@ defmodule Servy.Router do
     FileServer.serve_file(page, conv)
   end
 
+  def route(%Conv{path: "/error", method: "GET"} = _conv) do
+    raise "Kablomie"
+  end
+
+  def route(%Conv{path: "/hibernate/" <> time, method: "GET"} = conv) do
+    time |> String.to_integer() |> :timer.sleep()
+    Conv.put_content(conv, "Awake", "plain/text")
+  end
+
   def route(%Conv{path: "/wildthings", method: "GET"} = conv) do
     Conv.put_content(conv, "Bears, Lions, Tigers")
   end
