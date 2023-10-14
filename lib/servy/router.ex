@@ -2,6 +2,7 @@ defmodule Servy.Router do
   alias Servy.FileServer
   alias Servy.Conv
   alias Servy.Controllers.BearController
+  alias Servy.Videocam
 
   def route(%Conv{path: "/about", method: "GET"} = conv) do
     FileServer.serve_file("about.md", conv)
@@ -17,6 +18,22 @@ defmodule Servy.Router do
 
   def route(%Conv{path: "/error", method: "GET"} = _conv) do
     raise "Kablomie"
+  end
+
+  def route(%Conv{path: "/snapshots", method: "GET"} = conv) do
+    parent = self()
+
+    snapshots =
+      Enum.map(1..3, fn cam ->
+        spawn(fn -> send(parent, {:ok, Videocam.get_snapshot("cam-#{cam}")}) end)
+      end)
+      |> Enum.map(fn _ ->
+        receive do
+          {:ok, snapshot} -> snapshot
+        end
+      end)
+
+    Conv.put_content(conv, inspect(snapshots))
   end
 
   def route(%Conv{path: "/hibernate/" <> time, method: "GET"} = conv) do
