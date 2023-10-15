@@ -21,14 +21,19 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: "/sensors", method: "GET"} = conv) do
-    snapshot_pids =
-      Enum.map(1..3, &Fetcher.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
+    {time, result} =
+      :timer.tc(fn ->
+        snapshot_pids =
+          Enum.map(1..3, &Fetcher.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
 
-    location_pid = Fetcher.async(fn -> Servy.Tracker.get_location("bigfoot") end)
-    snapshots = Enum.map(snapshot_pids, &Fetcher.get_result/1)
-    location = Fetcher.get_result(location_pid)
+        location_pid = Fetcher.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+        snapshots = Enum.map(snapshot_pids, &Fetcher.get_result/1)
+        location = Fetcher.get_result(location_pid)
 
-    Conv.put_content(conv, inspect({snapshots, location}))
+        {snapshots, location}
+      end)
+
+    Conv.put_content(conv, inspect({time / 1000, result}))
   end
 
   def route(%Conv{path: "/hibernate/" <> time, method: "GET"} = conv) do

@@ -4,10 +4,7 @@ defmodule Servy.Tracker do
   to get the GPS coordinates of a wildthing.
   """
   def get_location(wildthing) do
-    # CODE GOES HERE TO SEND A REQUEST TO THE EXTERNAL API
-
-    # Sleep to simulate the API delay:
-    :timer.sleep(500)
+    :timer.sleep(Timer.get_random_time(2500))
 
     # Example responses returned from the API:
     locations = %{

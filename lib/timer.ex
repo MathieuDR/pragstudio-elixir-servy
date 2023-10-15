@@ -7,10 +7,12 @@ defmodule Timer do
       end)
 
   def power_nap do
-    time = :rand.uniform(10000)
+    time = get_random_time(10000)
     :timer.sleep(time)
     time
   end
+
+  def get_random_time(min \\ 0, max), do: :rand.uniform(max - min) + min
 
   def spawn_nap do
     p = self()
