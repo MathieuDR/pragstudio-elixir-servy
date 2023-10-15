@@ -1,0 +1,12 @@
+<h1> Sensor data! </h1>
+<h2> Images </h2>
+<ol>
+  <%= for image <- images do %>
+    <li><%= image %></li>
+  <% end %>
+</ol>
+
+<h2> Bigfoot location </h2>
+<p>
+  <%= location.lat %> - <%= location.lng %>
+</p>

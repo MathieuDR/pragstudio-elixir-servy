@@ -26,8 +26,10 @@ defmodule Servy.HttpServerTest do
       _server = spawn(fn -> Servy.HttpServer.start(port) end)
 
       Enum.map(1..5, fn _i ->
-        assert {:ok, response} = HTTPoison.get("localhost:#{port}/wildthings")
-        send(pid, {:ok, response.body})
+        spawn(fn ->
+          assert {:ok, response} = HTTPoison.get("localhost:#{port}/wildthings")
+          send(pid, {:ok, response.body})
+        end)
       end)
       |> Enum.map(fn _ ->
         response =
@@ -37,6 +39,29 @@ defmodule Servy.HttpServerTest do
 
         assert "Bears, Lions, Tigers" == response
       end)
+    end
+
+    test "Use tasks" do
+      port = 8999
+      _server = spawn(fn -> Servy.HttpServer.start(port) end)
+
+      Enum.map(1..5, fn _i ->
+        Task.async(fn -> HTTPoison.get("localhost:#{port}/wildthings") end)
+      end)
+      |> Enum.map(fn task ->
+        assert {:ok, %HTTPoison.Response{status_code: 200, body: "Bears, Lions, Tigers"}} =
+                 Task.await(task)
+      end)
+    end
+
+    test "Sanity check urls" do
+      port = 9000
+      _server = spawn(fn -> Servy.HttpServer.start(port) end)
+
+      ["/wildthings", "/sensors", "/bears/new", "/about"]
+      |> Enum.map(&Task.async(fn -> HTTPoison.get("localhost:#{port}#{&1}") end))
+      |> Enum.map(&Task.await(&1))
+      |> Enum.each(fn {:ok, %{status_code: code}} -> assert code == 200 end)
     end
   end
 end

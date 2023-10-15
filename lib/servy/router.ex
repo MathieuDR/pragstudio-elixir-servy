@@ -12,6 +12,18 @@ defmodule Servy.Router do
     FileServer.serve_file("form.html", conv)
   end
 
+  def route(%Conv{path: "/pages/sensors", method: "GET"} = conv) do
+    {snapshots, location} = get_sensor_data()
+
+    content =
+      "../templates"
+      |> Path.expand(__DIR__)
+      |> Path.join("sensors.eex")
+      |> EEx.eval_file(images: snapshots, location: location)
+
+    Conv.put_content(conv, content)
+  end
+
   def route(%Conv{path: "/pages/" <> page, method: "GET"} = conv) do
     FileServer.serve_file(page, conv)
   end
@@ -21,18 +33,7 @@ defmodule Servy.Router do
   end
 
   def route(%Conv{path: "/sensors", method: "GET"} = conv) do
-    {time, result} =
-      :timer.tc(fn ->
-        snapshot_tasks =
-          Enum.map(1..3, &Task.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
-
-        location_task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
-        snapshots = Enum.map(snapshot_tasks, &Task.await/1)
-        location = Task.await(location_task)
-
-        {snapshots, location}
-      end)
-
+    {time, result} = :timer.tc(fn -> get_sensor_data() end)
     Conv.put_content(conv, inspect({time / 1000, result}))
   end
 
@@ -78,5 +79,15 @@ defmodule Servy.Router do
 
   def route(%Conv{path: path} = conv) do
     Conv.put_content(conv, "Resource #{path} not found", "text/html", 404)
+  end
+
+  defp get_sensor_data do
+    snapshot_tasks = Enum.map(1..3, &Task.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
+
+    location_task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+    snapshots = Enum.map(snapshot_tasks, &Task.await/1)
+    location = Task.await(location_task)
+
+    {snapshots, location}
   end
 end

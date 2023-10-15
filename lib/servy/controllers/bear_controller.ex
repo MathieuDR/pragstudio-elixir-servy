@@ -28,7 +28,6 @@ defmodule Servy.Controllers.BearController do
 
   defp render(conv, template, bindings \\ []) do
     content = @templates_path |> Path.join(template) |> EEx.eval_file(bindings)
-
     Conv.put_content(conv, content)
   end
 end
