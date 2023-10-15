@@ -20,20 +20,15 @@ defmodule Servy.Router do
     raise "Kablomie"
   end
 
-  def route(%Conv{path: "/snapshots", method: "GET"} = conv) do
-    parent = self()
+  def route(%Conv{path: "/sensors", method: "GET"} = conv) do
+    snapshot_pids =
+      Enum.map(1..3, &Fetcher.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
 
-    snapshots =
-      Enum.map(1..3, fn cam ->
-        spawn(fn -> send(parent, {:ok, Videocam.get_snapshot("cam-#{cam}")}) end)
-      end)
-      |> Enum.map(fn _ ->
-        receive do
-          {:ok, snapshot} -> snapshot
-        end
-      end)
+    location_pid = Fetcher.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+    snapshots = Enum.map(snapshot_pids, &Fetcher.get_result/1)
+    location = Fetcher.get_result(location_pid)
 
-    Conv.put_content(conv, inspect(snapshots))
+    Conv.put_content(conv, inspect({snapshots, location}))
   end
 
   def route(%Conv{path: "/hibernate/" <> time, method: "GET"} = conv) do
