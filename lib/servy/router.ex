@@ -2,6 +2,7 @@ defmodule Servy.Router do
   alias Servy.FileServer
   alias Servy.Conv
   alias Servy.Controllers.BearController
+  alias Servy.Controllers.PledgeController
   alias Servy.Videocam
 
   def route(%Conv{path: "/about", method: "GET"} = conv) do
@@ -10,6 +11,14 @@ defmodule Servy.Router do
 
   def route(%Conv{path: "/bears/new", method: "GET"} = conv) do
     FileServer.serve_file("form.html", conv)
+  end
+
+  def route(%Conv{path: "/pledges", method: "POST"} = conv) do
+    PledgeController.create(conv, conv.params)
+  end
+
+  def route(%Conv{path: "/pledges", method: "GET"} = conv) do
+    PledgeController.index(conv)
   end
 
   def route(%Conv{path: "/pages/sensors", method: "GET"} = conv) do

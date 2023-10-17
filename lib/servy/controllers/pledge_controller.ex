@@ -5,7 +5,7 @@ defmodule Servy.Controllers.PledgeController do
   end
 
   def index(conv) do
-    pledges = Servy.Pledges.get_pledget()
+    {:ok, pledges} = Servy.Pledges.get_pledges()
     Servy.Conv.put_content(conv, inspect(pledges))
   end
 end
