@@ -1,7 +1,6 @@
 defmodule Servy.Controllers.BearController do
   alias Servy.Conv
   alias Servy.Wildthings
-  alias Servy.Models.Bear
 
   @templates_path Path.expand("../../templates", __DIR__)
 

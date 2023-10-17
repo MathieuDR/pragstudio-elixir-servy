@@ -1,11 +1,29 @@
 defmodule Servy.Pledges do
   @process_name :pledge_server
 
+  # CLIENT
   def start() do
     spawn(__MODULE__, :loop, [[]])
     |> Process.register(@process_name)
   end
 
+  def create_pledge(name, amount) do
+    send(@process_name, {self(), :create_pledge, name, amount})
+
+    {:ok, receive_message()}
+  end
+
+  def get_pledges() do
+    send(@process_name, {self(), :get_pledges})
+    {:ok, receive_message() |> Enum.take(3)}
+  end
+
+  def total_pledged do
+    send(@process_name, {self(), :total_pledged})
+    {:ok, receive_message()}
+  end
+
+  # SERVER
   def loop(state) do
     receive do
       {sender, :create_pledge, name, amount} ->
@@ -17,24 +35,20 @@ defmodule Servy.Pledges do
       {sender, :get_pledges} ->
         send(sender, {:pledge_ok, state})
         loop(state)
+
+      {sender, :total_pledged} ->
+        total = Enum.map(state, &elem(&1, 1)) |> Enum.sum()
+        send(sender, {:pledge_ok, total})
+        loop(state)
+
+      other ->
+        IO.puts("UNKNOWN MESAGE: #{inspect(other)}")
     end
   end
 
-  def create_pledge(name, amount) do
-    send(@process_name, {self(), :create_pledge, name, amount})
-
+  defp receive_message() do
     receive do
-      {:pledge_ok, pledge_id} -> {:ok, pledge_id}
-    after
-      5000 -> :error
-    end
-  end
-
-  def get_pledges() do
-    send(@process_name, {self(), :get_pledges})
-
-    receive do
-      {:pledge_ok, pledges} -> {:ok, pledges |> Enum.take(3)}
+      {:pledge_ok, result} -> result
     after
       5000 -> :error
     end
