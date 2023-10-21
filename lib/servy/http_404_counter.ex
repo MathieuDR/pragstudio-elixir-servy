@@ -1,5 +1,5 @@
 defmodule Servy.Http404Counter do
-  @pid_name __MODULE__
+  @pid_name :counter_server
   def start(initial_state \\ %{}) do
     Process.whereis(@pid_name)
     |> case do

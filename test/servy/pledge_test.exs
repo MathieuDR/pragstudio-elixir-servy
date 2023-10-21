@@ -4,17 +4,13 @@ defmodule Servy.PledgeTest do
   alias Servy.Pledges
 
   setup do
-    Process.whereis(:pledge_server)
-    |> case do
-      nil ->
-        :ok
+    SpawnSupport.reset_or_start_server(:pledge_server, &Pledges.start/1, [
+      {"Thieu", 200},
+      {"Shooki", 100},
+      {"Vreemden", 50},
+      {"Blieken", 25}
+    ])
 
-      pid ->
-        Process.unregister(:pledge_server)
-        Process.exit(pid, :kill)
-    end
-
-    Pledges.start([{"Thieu", 200}, {"Shooki", 100}, {"Vreemden", 50}, {"Blieken", 25}])
     :ok
   end
 
