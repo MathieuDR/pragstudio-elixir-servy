@@ -1,5 +1,5 @@
 defmodule Servy.Http404CounterTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias Servy.Http404Counter, as: Counter
 
@@ -15,6 +15,6 @@ defmodule Servy.Http404CounterTest do
     assert Counter.get_count("/nessie") == 3
     assert Counter.get_count("/bigfoot") == 2
 
-    assert Counter.get_counts() == %{"/bigfoot" => 2, "/nessie" => 3}
+    assert %{"/bigfoot" => 2, "/nessie" => 3} = Counter.get_counts()
   end
 end

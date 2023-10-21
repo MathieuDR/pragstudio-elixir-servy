@@ -8,7 +8,7 @@ defmodule Servy.HttpServerTest do
 
       response = Servy.HttpClient.send_and_forget("localhost", port, "abcd")
 
-      # Bad request, gets closed but not resufed.
+      # Bad request, gets closed but not refused.
       assert response == {:error, :closed}
     end
 
@@ -42,7 +42,7 @@ defmodule Servy.HttpServerTest do
     end
 
     test "Use tasks" do
-      port = 8999
+      port = 8799
       _server = spawn(fn -> Servy.HttpServer.start(port) end)
 
       Enum.map(1..5, fn _i ->

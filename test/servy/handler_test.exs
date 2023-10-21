@@ -1,6 +1,5 @@
 defmodule Servy.HandlerTest do
   use ExUnit.Case
-  alias Servy.ServySupportTest
 
   defp create_request(verb, path) do
     """
@@ -11,6 +10,10 @@ defmodule Servy.HandlerTest do
     \r
     """
   end
+
+  # setup_all do
+  #   Servy.Http404Counter.start()
+  # end
 
   describe "handle/1" do
     test "returns correct response for request" do
@@ -76,6 +79,7 @@ defmodule Servy.HandlerTest do
     end
 
     test "Returns 404 not found for not found path" do
+      Servy.Http404Counter.start()
       request = create_request("GET", "/bamboozled")
 
       assert """
