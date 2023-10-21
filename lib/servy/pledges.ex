@@ -8,37 +8,49 @@ defmodule Servy.Pledges do
   end
 
   def create_pledge(name, amount) do
-    send(@process_name, {self(), :create_pledge, name, amount})
-
-    {:ok, receive_message()}
+    {:ok, call(@process_name, {:create_pledge, name, amount})}
   end
 
   def get_pledges() do
-    send(@process_name, {self(), :get_pledges})
-    {:ok, receive_message() |> Enum.take(3)}
+    response =
+      call(@process_name, :get_pledges)
+      |> Enum.take(3)
+
+    {:ok, response}
   end
 
   def total_pledged do
-    send(@process_name, {self(), :total_pledged})
-    {:ok, receive_message()}
+    {:ok, call(@process_name, :total_pledged)}
+  end
+
+  def clear() do
+    cast(@process_name, :pledge_clear)
+  end
+
+  def cast(pid, message) do
+    send(pid, {:cast, message})
+  end
+
+  def call(pid, message) do
+    send(pid, {:call, self(), message})
+
+    receive do
+      {:response, response} -> response
+    after
+      5000 -> :error
+    end
   end
 
   # SERVER
   def loop(state) do
     receive do
-      {sender, :create_pledge, name, amount} ->
-        {:ok, pledge_id} = send_to_service(name, amount)
-        state = [{name, amount} | state]
-        send(sender, {:pledge_ok, pledge_id})
+      {:call, sender, message} when is_pid(sender) ->
+        {response, state} = handle_call(message, state)
+        send(sender, {:response, response})
         loop(state)
 
-      {sender, :get_pledges} ->
-        send(sender, {:pledge_ok, state})
-        loop(state)
-
-      {sender, :total_pledged} ->
-        total = Enum.map(state, &elem(&1, 1)) |> Enum.sum()
-        send(sender, {:pledge_ok, total})
+      {:cast, message} ->
+        state = handle_cast(message, state)
         loop(state)
 
       other ->
@@ -46,12 +58,20 @@ defmodule Servy.Pledges do
     end
   end
 
-  defp receive_message() do
-    receive do
-      {:pledge_ok, result} -> result
-    after
-      5000 -> :error
-    end
+  def handle_cast(:clear, _state), do: []
+
+  def handle_call(:total_pledged, state) do
+    {Enum.map(state, &elem(&1, 1)) |> Enum.sum(), state}
+  end
+
+  def handle_call(:get_pledges, state) do
+    {state, state}
+  end
+
+  def handle_call({:create_pledge, name, amount} = _message, state) do
+    {:ok, pledge_id} = send_to_service(name, amount)
+    state = [{name, amount} | state]
+    {pledge_id, state}
   end
 
   defp send_to_service(_name, _amount) do
