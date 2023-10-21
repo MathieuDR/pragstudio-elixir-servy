@@ -2,8 +2,8 @@ defmodule Servy.Pledges do
   @process_name :pledge_server
 
   # CLIENT
-  def start() do
-    spawn(__MODULE__, :loop, [[]])
+  def start(initial_state \\ []) do
+    spawn(__MODULE__, :loop, [initial_state])
     |> Process.register(@process_name)
   end
 

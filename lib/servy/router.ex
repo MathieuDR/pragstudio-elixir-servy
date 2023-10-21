@@ -17,6 +17,10 @@ defmodule Servy.Router do
     PledgeController.create(conv, conv.params)
   end
 
+  def route(%Conv{path: "/404s", method: "GET"} = conv) do
+    Conv.put_content(conv, inspect(Servy.Http404Counter.get_counts()))
+  end
+
   def route(%Conv{path: "/pledges", method: "GET"} = conv) do
     PledgeController.index(conv)
   end

@@ -28,6 +28,8 @@ defmodule Servy.Plugins do
       Logger.warn("#{path} not found")
     end
 
+    Servy.Http404Counter.bump_count(path)
+
     conv
   end
 
