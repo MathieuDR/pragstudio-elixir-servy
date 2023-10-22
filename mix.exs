@@ -8,6 +8,7 @@ defmodule Servy.MixProject do
       app: :servy,
       version: "0.1.0",
       elixir: "~> 1.14",
+      description: "a bad HTTP server",
       start_permanent: env == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(env)
@@ -20,7 +21,9 @@ defmodule Servy.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :eex]
+      extra_applications: [:logger, :eex],
+      mod: {Servy, []},
+      env: [port: 8971]
     ]
   end
 
