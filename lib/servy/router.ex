@@ -95,12 +95,6 @@ defmodule Servy.Router do
   end
 
   defp get_sensor_data do
-    snapshot_tasks = Enum.map(1..3, &Task.async(fn -> Videocam.get_snapshot("camera-#{&1}") end))
-
-    location_task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
-    snapshots = Enum.map(snapshot_tasks, &Task.await/1)
-    location = Task.await(location_task)
-
-    {snapshots, location}
+    Servy.SensorServer.get_sensor_data()
   end
 end

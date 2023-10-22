@@ -18,7 +18,7 @@ defmodule GenericServer do
 
       message ->
         state = callback_module.handle_info(message, state)
-        loop(state)
+        loop(state, callback_module)
     end
   end
 
