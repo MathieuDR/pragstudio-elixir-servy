@@ -1,5 +1,5 @@
 defmodule Servy.HttpServerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   describe "start/1" do
     test "opens on the correct port" do
@@ -54,12 +54,28 @@ defmodule Servy.HttpServerTest do
       end)
     end
 
-    test "Sanity check urls" do
-      port = 9000
+    test "can do /about" do
+      port = 9002
       _server = spawn(fn -> Servy.HttpServer.start(port) end)
 
+      assert {:ok, response} = HTTPoison.get("localhost:#{port}/about")
+      assert 200 = response.status_code
+
+      assert "<h1>\nAbout</h1>\n<h2>\nMy very cool about page</h2>\n<ul>\n  <li>\nI go on about my day  </li>\n  <li>\nYou go on about your day  </li>\n</ul>\n" ==
+               response.body
+    end
+
+    test "Sanity check urls" do
+      port = 9001
+      _server = spawn(fn -> Servy.HttpServer.start(port) end) |> IO.inspect()
+
       ["/wildthings", "/sensors", "/bears/new", "/about"]
-      |> Enum.map(&Task.async(fn -> HTTPoison.get("localhost:#{port}#{&1}") end))
+      |> Enum.map(
+        &Task.async(fn ->
+          IO.inspect(&1)
+          HTTPoison.get("localhost:#{port}#{&1}")
+        end)
+      )
       |> Enum.map(&Task.await(&1))
       |> Enum.each(fn {:ok, %{status_code: code}} -> assert code == 200 end)
     end
