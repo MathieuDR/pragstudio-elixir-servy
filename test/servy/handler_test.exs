@@ -79,7 +79,7 @@ defmodule Servy.HandlerTest do
     end
 
     test "Returns 404 not found for not found path" do
-      Servy.Http404Counter.start()
+      Servy.Http404Counter.start_link(%{})
       request = create_request("GET", "/bamboozled")
 
       assert """

@@ -4,7 +4,7 @@ defmodule Servy.PledgeTest do
   alias Servy.Pledges
 
   setup do
-    SpawnSupport.reset_or_start_server(:pledge_server, &Pledges.start/1, %Pledges.State{
+    SpawnSupport.reset_or_start_server(:pledge_server, &Pledges.start_link/1, %Pledges.State{
       pledges: [
         {"Thieu", 200},
         {"Shooki", 100},

@@ -6,7 +6,11 @@ defmodule Servy.ServiceSupervisor do
   end
 
   def init(:ok) do
-    [{Servy.Pledges, %Servy.Pledges.State{}}, {Servy.SensorServer, :timer.seconds(60)}]
+    [
+      {Servy.Pledges, %Servy.Pledges.State{}},
+      {Servy.SensorServer, :timer.seconds(60)},
+      {Servy.Http404Counter, %{}}
+    ]
     |> Supervisor.init(strategy: :one_for_one)
   end
 end

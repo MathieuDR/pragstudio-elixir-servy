@@ -4,7 +4,7 @@ defmodule Servy.Http404CounterTest do
   alias Servy.Http404Counter, as: Counter
 
   setup do
-    SpawnSupport.reset_or_start_server(:counter_server, &Counter.start/1, %{"initial" => 2})
+    SpawnSupport.reset_or_start_server(:counter_server, &Counter.start_link/1, %{"initial" => 2})
     :ok
   end
 
