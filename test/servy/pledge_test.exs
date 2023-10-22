@@ -4,12 +4,13 @@ defmodule Servy.PledgeTest do
   alias Servy.Pledges
 
   setup do
-    SpawnSupport.reset_or_start_server(:pledge_server, &Pledges.start/1, [
-      {"Thieu", 200},
-      {"Shooki", 100},
-      {"Vreemden", 50},
-      {"Blieken", 25}
-    ])
+    SpawnSupport.reset_or_start_server(:pledge_server, &Pledges.start/1, %Pledges.State{
+      pledges: [
+        {"Thieu", 200},
+        {"Shooki", 100},
+        {"Vreemden", 50}
+      ]
+    })
 
     :ok
   end
@@ -24,5 +25,11 @@ defmodule Servy.PledgeTest do
 
   test "total_pledges/0 totals all pledges" do
     assert {:ok, 375} = Pledges.total_pledged()
+  end
+
+  test "set_cache_size/1 changes amount of pledges" do
+    Pledges.set_cache_size(4)
+    assert {:ok, pledges} = Pledges.get_pledges()
+    assert 4 == Enum.count(pledges)
   end
 end

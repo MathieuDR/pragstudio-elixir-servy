@@ -60,4 +60,12 @@ defmodule Servy.Http404CounterTest do
 
     assert %{"/bigfoot" => 2, "/nessie" => 3} = Counter.get_counts()
   end
+
+  describe "reset/0" do
+    test "resets to an empty map" do
+      Counter.reset()
+
+      assert %{} == Counter.get_counts()
+    end
+  end
 end
