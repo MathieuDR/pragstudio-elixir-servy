@@ -16,8 +16,9 @@ defmodule GenericServer do
         state = callback_module.handle_cast(message, state)
         loop(state, callback_module)
 
-      other ->
-        IO.puts("UNKNOWN MESAGE: #{inspect(other)}")
+      message ->
+        state = callback_module.handle_info(message, state)
+        loop(state)
     end
   end
 
