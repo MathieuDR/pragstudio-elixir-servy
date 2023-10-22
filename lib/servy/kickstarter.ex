@@ -2,8 +2,8 @@ defmodule Servy.Kickstarter do
   use GenServer
   @name __MODULE__
 
-  def start do
-    GenServer.start(__MODULE__, :ok, name: @name)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
   def init(:ok) do
