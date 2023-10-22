@@ -6,9 +6,9 @@ defmodule Servy.Pledges do
     defstruct cache_size: 3, pledges: []
   end
 
-  # CLIENT
-  def start(%State{} = initial_state \\ %State{}) do
-    GenServer.start(__MODULE__, initial_state, name: @process_name)
+  def start_link(%State{} = initial_state) do
+    IO.puts("Starts pledges")
+    GenServer.start_link(__MODULE__, initial_state, name: @process_name)
   end
 
   def create_pledge(name, amount) do
